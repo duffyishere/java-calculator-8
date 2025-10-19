@@ -23,7 +23,7 @@ public class Calculator {
             String[] splitInput;
             if (this.input.startsWith("//")) {//커스텀 구분자를 사용하는 경우
                 Matcher matcher = CUSTOM_SEPARATOR_PATTERN.matcher(this.input);
-                if (!matcher.matches()) throw new IllegalArgumentException("잘못된 구분자가 입력되었습니다.");
+                if (!matcher.matches()) throw new IllegalArgumentException("잘못된 구분자가 입력되었습니다. (\\는 구분자로 사용할 수 없습니다.)");
                 splitInput = matcher.group(2).split(",|:|" + Pattern.quote(matcher.group(1)));
             } else {
                 splitInput = this.input.split(",|:");
