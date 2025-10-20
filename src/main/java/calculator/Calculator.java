@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Calculator {
-    public static final Pattern CUSTOM_SEPARATOR_PATTERN = Pattern.compile("//(.)\\\\n+(.*)", Pattern.DOTALL);
+    public static final Pattern CUSTOM_SEPARATOR_PATTERN = Pattern.compile("//(.*)\\\\n+(.*)", Pattern.DOTALL);
     public static final String DEFAULT_SEPARATORS = ",|:";
     public static final String SEPARATOR_PREFIX = "//";
 
@@ -26,7 +26,7 @@ public class Calculator {
         if (this.expression.startsWith(SEPARATOR_PREFIX)) {
             Matcher matcher = CUSTOM_SEPARATOR_PATTERN.matcher(this.expression);
             if (!matcher.matches())
-                throw new IllegalArgumentException("잘못된 구분자가 입력되었습니다. (\\는 구분자로 사용할 수 없습니다.)");
+                throw new IllegalArgumentException("잘못된 구분자가 입력되었습니다. (\n은 구분자로 사용할 수 없습니다.)");
             String separators = DEFAULT_SEPARATORS + "|" + Pattern.quote(matcher.group(1));
             splitExpression = matcher.group(2).split(separators);
         } else {
