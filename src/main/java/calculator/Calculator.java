@@ -6,11 +6,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Calculator {
-    private String input;
     public static final Pattern CUSTOM_SEPARATOR_PATTERN = Pattern.compile("//(.)\r?\n+(.*)", Pattern.DOTALL);
+    public static final String DEFAULT_SEPARATORS = ",|:|";
+    public static final String SEPARATOR_PREFIX = "//";
 
-    public Calculator(String input) {
-        this.input = input;
+    private String expression;
+
+    public Calculator(String expression) {
+        this.expression = expression;
     }
 
     public int sum() {
@@ -19,17 +22,23 @@ public class Calculator {
     }
 
     private List<Integer> split() {
+        String[] splitExpression;
+        if (this.expression.startsWith(SEPARATOR_PREFIX)) {
+            Matcher matcher = CUSTOM_SEPARATOR_PATTERN.matcher(this.expression);
+            if (!matcher.matches()) 
+                throw new IllegalArgumentException("잘못된 구분자가 입력되었습니다. (\\는 구분자로 사용할 수 없습니다.)");
+            String separators = DEFAULT_SEPARATORS + Pattern.quote(matcher.group(1));
+            splitExpression = matcher.group(2).split(separators);
+        } else {
+            splitExpression = this.expression.split(DEFAULT_SEPARATORS);
+        }
+        return parseInt(splitExpression);
+    }
+
+    private List<Integer> parseInt(String[] splitExpression) {
         try {
-            String[] splitInput;
-            if (this.input.startsWith("//")) {//커스텀 구분자를 사용하는 경우
-                Matcher matcher = CUSTOM_SEPARATOR_PATTERN.matcher(this.input);
-                if (!matcher.matches()) throw new IllegalArgumentException("잘못된 구분자가 입력되었습니다. (\\는 구분자로 사용할 수 없습니다.)");
-                splitInput = matcher.group(2).split(",|:|" + Pattern.quote(matcher.group(1)));
-            } else {
-                splitInput = this.input.split(",|:");
-            }
             List<Integer> result = new ArrayList<>();
-            for (String str: splitInput) {
+            for (String str: splitExpression) {
                 Integer num = Integer.parseInt(str.trim());
                 if (num < 0) throw new IllegalArgumentException("음수 값은 입력할 수 없습니다.");
                 result.add(num);
